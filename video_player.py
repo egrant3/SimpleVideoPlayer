@@ -132,6 +132,8 @@ class SimpleVideoPlayer:
         fs_H = self.monitor.height
         fs_W = self.monitor.width
 
+        FPS_duration = 1.0 / self.fps()
+
         # Compute needed params to show fullscreen without stretching
         if self._reader.isOpened():
             success = False
@@ -160,10 +162,12 @@ class SimpleVideoPlayer:
             self.create_window(window_name, cv2.WINDOW_NORMAL)
             cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, 1)
 
+        start_time = time.perf_counter()
+
         while(self._reader.isOpened() and not self.should_quit and not self.should_load_new):
             # Read in new frame
-            success, frame = self.read()                 
-            
+            success, frame = self.read()         
+
             if success:
 
                 if self.is_fullscreen:
@@ -184,7 +188,9 @@ class SimpleVideoPlayer:
                         self.create_window(window_name, window_mode)                        
 
                     # print(f'showing {self._frame_pos-1}')
-                    cv2.imshow(window_name, frame2show)
+                    if (time.perf_counter() - start_time) >= FPS_duration:       
+                        cv2.imshow(window_name, frame2show)
+                        start_time = time.perf_counter()
 
                     key_full = cv2.waitKey(1)#self._wait_time_ms)
                     key = key_full & 0xFF
