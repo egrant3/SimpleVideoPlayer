@@ -14,5 +14,6 @@ echo Installing dependencies...
 pip install numpy
 pip install opencv-python
 pip install screeninfo
+pip install pyinstaller
 
 echo Done
