@@ -5,7 +5,8 @@ import screeninfo
 import time
 import os
 
-from tkinter.filedialog import askopenfilename
+import tkinter as tk
+from tkinter import filedialog
 
 VP_CONFIG = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'video_player_config.txt')
 
@@ -65,7 +66,9 @@ class SimpleVideoPlayer:
 
     def open_file_dialog(self):
         base_path = self.read_player_default_path()        
-        return askopenfilename(initialdir=base_path, title="Select a file")        
+        root = tk.Tk()
+        root.withdraw()
+        return filedialog.askopenfilename(initialdir=base_path, title="Select a file")        
 
     def __len__(self):
         return int(self._reader.get(cv2.CAP_PROP_FRAME_COUNT))

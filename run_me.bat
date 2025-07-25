@@ -1,2 +1,4 @@
+@echo off
 call .venv\Scripts\activate
-python .\video_player.py
+START /B cmd /c "python .\video_player.py"
+exit
