@@ -16,8 +16,8 @@ class SimpleVideoPlayer:
 
         self._init_tk()
 
-        self.path = path if path is not None else self.open_file_dialog()
-        self.load_video(self.path)
+        self.video_loaded = False
+        self.choose_video(path)
 
         for m in self.monitors():
             if m.is_primary:
@@ -49,7 +49,28 @@ class SimpleVideoPlayer:
         with open(VP_CONFIG, 'w') as f:
             f.write(f'{val}\n')
 
+    def choose_video(self, path=None):
+
+        while True:            
+            self.path = path if path is not None else self.open_file_dialog()
+            path = None
+
+            if len(self.path) == 0:
+                break
+
+            try:
+                self.load_video(self.path)
+            except:
+                pass
+
+            if self.video_loaded:
+                break
+
+
     def load_video(self, video_path):
+
+        self.video_loaded = False
+
         try:
             self._reader.release()
             del self._reader
@@ -63,6 +84,7 @@ class SimpleVideoPlayer:
         self.path = video_path
         self.set_player_default_path(os.path.dirname(video_path))
 
+        self.video_loaded = True
         print(f'\nSuccessfully loaded video from \n\t{video_path}\nWith properties:\n\t' + \
               f'Resolution: {self.height()} x {self.width()}\n\t' + \
               f'Duration: {self.frame_count() / self.fps():0.2f}s ({self.frame_count()} frames)\n\t' + \
@@ -74,7 +96,7 @@ class SimpleVideoPlayer:
 
     def open_file_dialog(self):
         base_path = self.read_player_default_path()        
-        file = filedialog.askopenfilename(initialdir=base_path, title="Select a file")     
+        file = filedialog.askopenfilename(initialdir=base_path, title="Select video file")     
         return file   
 
     def get_user_input(self, label=None):
@@ -162,24 +184,24 @@ class SimpleVideoPlayer:
         # cv2.setWindowProperty(name,cv2.WND_PROP_TOPMOST, 1)
     
     @classmethod
-    def monitors(cls):
-        # winname = 'Fullscreen Test'
-        # cv2.namedWindow(winname, cv2.WINDOW_NORMAL)
-        # cv2.setWindowProperty(winname, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-        monitors = screeninfo.get_monitors()
-        # for m in reversed(monitors):
-        #     print(m)
-        return monitors
+    def monitors(cls):        
+        return screeninfo.get_monitors()
 
-    def play(self):
+    def play(self):        
+        
         while not self.should_quit:
+            if not self.video_loaded:
+                break
             self.__play()
             if self.should_load_new:
-                new_path = self.open_file_dialog()
-                self.load_video(new_path)
                 self.should_load_new = False
+                self.choose_video()            
+
                 
     def __play(self):
+
+        if not self.video_loaded:
+            return
 
         window_name = self.path
         window_mode = None
