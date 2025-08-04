@@ -304,7 +304,7 @@ class SimpleVideoPlayer:
                 req_new_frame = True           
                 self.show_text = not self.show_text
                 if self.paused:
-                    self.set_frame_pos_relative(-3)
+                    self.set_frame_pos_relative(-2)
                 
             if key in [ord('f'), ord('F')]:
                 self.is_fullscreen = not self.is_fullscreen
