@@ -4,6 +4,7 @@ import numpy as np
 import screeninfo
 import time
 import os
+import sys
 
 import tkinter as tk
 from tkinter import filedialog
@@ -360,7 +361,8 @@ class SimpleVideoPlayer:
 
 if __name__ == "__main__":
     try:
-        vp = SimpleVideoPlayer()
+        path = sys.argv[1] if len(sys.argv) > 1 else None
+        vp = SimpleVideoPlayer(path=path)
         vp.play()
 
     except Exception as e:
